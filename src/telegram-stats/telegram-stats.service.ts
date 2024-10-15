@@ -8,25 +8,6 @@ import { Context } from 'telegraf';
 export class TelegramStatsService {
   constructor(private statsService: StatsService) {}
 
-  getData(): { message: string } {
-    return { message: 'Welcome to server!' };
-  }
-
-  @Start()
-  async startCommand(ctx: Context) {
-    await ctx.reply('Welcome');
-  }
-
-  @Help()
-  async helpCommand(ctx: Context) {
-    await ctx.reply('Send me a sticker');
-  }
-
-  @Hears('hi')
-  async hearsHi(ctx: Context) {
-    await ctx.reply('Hey there');
-  }
-
   @On('chat_member')
   async onNewChatMembers(ctx: Context) {
     await this.statsService.createStat({
