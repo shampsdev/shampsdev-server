@@ -5,9 +5,10 @@ import { GithubStatsService } from './github-stats.service';
 export class GithubStatsController {
   constructor(private readonly githubStatsService: GithubStatsService) {}
 
-  @Post('github')
+  @Post()
   handleGithubWebhook(@Req() req: Request) {
     const event = req.headers['x-github-event'];
+    console.log(req);
 
     if (event === 'push') {
       const payload = req.body;
