@@ -10,10 +10,18 @@ export class TelegramStatsService {
 
   @On('chat_member')
   async onNewChatMembers(ctx: Context) {
+    const currentCount = (await this.statsService.findLatest()).find(
+      (x) => x.stat_id == 'telegram_channel_count'
+    ).count;
+
+    const updatedCount =
+      currentCount +
+      (ctx.chatMember.new_chat_member.status == 'member' ? 1 : -1);
+
     await this.statsService.createStat({
       stat_id: 'telegram_channel_count',
       name: 'подписчиков в телеграм канале',
-      count: await ctx.telegram.getChatMembersCount(ctx.chatMember.chat.id),
+      count: updatedCount,
     });
 
     if (ctx.chatMember.new_chat_member.status == 'member') {
@@ -24,7 +32,6 @@ export class TelegramStatsService {
       });
     }
   }
-  
 
   @On('message')
   async onMessage(ctx: Context) {
