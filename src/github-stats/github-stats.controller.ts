@@ -19,7 +19,7 @@ export class GithubStatsController {
       const currentCount =
         (await this.statsService.findLatest()).find(
           (x) => x.stat_id == 'github_commit_count'
-        ).count ?? 0;
+        )?.count ?? 0;
 
       const updatedCount = currentCount + 1;
 
