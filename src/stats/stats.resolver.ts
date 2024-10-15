@@ -2,13 +2,14 @@ import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { StatsService } from './stats.service';
 import { Stat } from './stat.entity';
 import { CreateStatInput } from './dto/create-stat.input';
-import { PubSub } from 'graphql-subscriptions';
-
-export const pubSub = new PubSub();
+import { PubSubService } from 'src/pub-sub/pub-sub.service';
 
 @Resolver(() => Stat)
 export class StatsResolver {
-  constructor(private statService: StatsService) {}
+  constructor(
+    private statService: StatsService,
+    private pubSubService: PubSubService
+  ) {}
 
   @Query(() => [Stat])
   async stats(): Promise<Stat[]> {
@@ -17,16 +18,13 @@ export class StatsResolver {
 
   @Mutation(() => Stat)
   async createStat(
-    @Args('createStatInput') createStatInput: CreateStatInput,
+    @Args('createStatInput') createStatInput: CreateStatInput
   ): Promise<Stat> {
-    const newStat = await this.statService.createStat(createStatInput);
-    const newStats = await this.statService.findLatest();
-    pubSub.publish('statCreated', { statCreated: newStats });
-    return newStat;
+    return await this.statService.createStat(createStatInput);
   }
 
   @Subscription(() => [Stat])
   statCreated() {
-    return pubSub.asyncIterator('statCreated');
+    return this.pubSubService.getPubSub().asyncIterator('statCreated');
   }
 }

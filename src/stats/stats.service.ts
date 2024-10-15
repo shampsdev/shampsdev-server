@@ -3,11 +3,13 @@ import { Stat } from './stat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateStatInput } from './dto/create-stat.input';
+import { PubSubService } from 'src/pub-sub/pub-sub.service';
 
 @Injectable()
 export class StatsService {
   constructor(
     @InjectRepository(Stat) private statsRepository: Repository<Stat>,
+    private pubSubService: PubSubService
   ) {}
 
   async createStat(createStatInput: CreateStatInput): Promise<Stat> {
@@ -15,6 +17,11 @@ export class StatsService {
       ...createStatInput,
       timestamp: new Date(),
     });
+
+    const newStats = await this.findLatest();
+    this.pubSubService
+      .getPubSub()
+      .publish('statCreated', { statCreated: newStats });
 
     return this.statsRepository.save(newStat);
   }

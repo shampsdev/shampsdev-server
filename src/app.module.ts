@@ -6,9 +6,11 @@ import { GraphQLModule } from '@nestjs/graphql/dist/graphql.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TelegramModule } from 'nestjs-telegram';
-import { TelegramStatsService } from './telegram-stats/telegram-stats.service';
 import { ConfigModule } from '@nestjs/config';
+import { TelegrafModule } from 'nestjs-telegraf';
+import { TelegramStatsService } from './telegram-stats/telegram-stats.service';
+import { TelegramStatsModule } from './telegram-stats/telegram-stats.module';
+import { PubSubService } from './pub-sub/pub-sub.service';
 
 @Module({
   imports: [
@@ -29,12 +31,16 @@ import { ConfigModule } from '@nestjs/config';
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: process.env.AUTO_MIGRATE === 'True',
     }),
-    TelegramModule.forRoot({
-      botKey: process.env.BOT_KEY,
+    TelegrafModule.forRoot({
+      token: process.env.BOT_KEY,
+      launchOptions: {
+        allowedUpdates: ['chat_member', 'chat_boost', 'removed_chat_boost'],
+      },
     }),
     StatsModule,
+    TelegramStatsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, TelegramStatsService],
+  providers: [AppService, StatsModule, TelegramStatsService, PubSubService],
 })
 export class AppModule {}
