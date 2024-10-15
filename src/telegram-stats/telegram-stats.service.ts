@@ -24,6 +24,7 @@ export class TelegramStatsService {
       });
     }
   }
+  
 
   @On('message')
   async onMessage(ctx: Context) {

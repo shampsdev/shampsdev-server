@@ -18,12 +18,12 @@ export class StatsService {
       timestamp: new Date(),
     });
 
-    const newStats = await this.findLatest();
+    const savedStat = await this.statsRepository.save(newStat);
     this.pubSubService
       .getPubSub()
-      .publish('statCreated', { statCreated: newStats });
+      .publish('statCreated', { statCreated: savedStat });
 
-    return this.statsRepository.save(newStat);
+    return savedStat;
   }
 
   async findLatest(): Promise<Stat[]> {
