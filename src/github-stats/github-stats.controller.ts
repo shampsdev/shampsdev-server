@@ -1,17 +1,32 @@
 import { Controller, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { GithubStatsService } from './github-stats.service';
+import { StatsService } from 'src/stats/stats.service';
+
+// todo
+// move most of these methods into the service
+// add security features
 
 @Controller('github-stats')
 export class GithubStatsController {
-  constructor(private readonly githubStatsService: GithubStatsService) {}
+  constructor(private readonly statsService: StatsService) {}
 
-  @Post('webhook')
-  handleGithubWebhook(@Req() req: Request) {
+  @Post()
+  async handleGithubWebhook(@Req() req: Request) {
     const event = req.headers['x-github-event'];
 
     if (event === 'push') {
-      const payload = req.body;
+      const currentCount =
+        (await this.statsService.findLatest()).find(
+          (x) => x.stat_id == 'github_commit_count'
+        )?.count ?? 0;
 
+      const updatedCount = currentCount + 1;
+
+      await this.statsService.createStat({
+        stat_id: 'github_commit_count',
+        name: 'коммита',
+        count: updatedCount,
+      });
 
       return HttpStatus.OK;
     } else {

@@ -4,6 +4,9 @@ import { Stat } from './stat.entity';
 import { CreateStatInput } from './dto/create-stat.input';
 import { PubSubService } from 'src/pub-sub/pub-sub.service';
 
+// todo
+// add security features so not anybody can deface the website ;)
+
 @Resolver(() => Stat)
 export class StatsResolver {
   constructor(
