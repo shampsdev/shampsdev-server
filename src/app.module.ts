@@ -9,8 +9,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { TelegramStatsService } from './telegram-stats/telegram-stats.service';
-import { TelegramStatsModule } from './telegram-stats/telegram-stats.module';
 import { PubSubService } from './pub-sub/pub-sub.service';
+import { GithubStatsService } from './github-stats/github-stats.service';
+import { GithubStatsController } from './github-stats/github-stats.controller';
 
 @Module({
   imports: [
@@ -34,13 +35,17 @@ import { PubSubService } from './pub-sub/pub-sub.service';
     TelegrafModule.forRoot({
       token: process.env.BOT_KEY,
       launchOptions: {
-        allowedUpdates: ['chat_member', 'chat_boost', 'removed_chat_boost'],
+        allowedUpdates: [
+          'chat_member',
+          'chat_boost',
+          'removed_chat_boost',
+          'message',
+        ],
       },
     }),
     StatsModule,
-    TelegramStatsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, StatsModule, TelegramStatsService, PubSubService],
+  controllers: [AppController, GithubStatsController],
+  providers: [AppService, StatsModule, TelegramStatsService, PubSubService, GithubStatsService],
 })
 export class AppModule {}
