@@ -13,7 +13,6 @@ export class GithubStatsController {
   @Post()
   async handleGithubWebhook(@Req() req: Request) {
     const event = req.headers['x-github-event'];
-    console.log(req);
 
     if (event === 'push') {
       const currentCount =
