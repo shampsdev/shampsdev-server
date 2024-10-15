@@ -19,9 +19,10 @@ export class StatsService {
     });
 
     const savedStat = await this.statsRepository.save(newStat);
+    const newStats = await this.findLatest();
     this.pubSubService
       .getPubSub()
-      .publish('statCreated', { statCreated: savedStat });
+      .publish('statCreated', { statCreated: newStats });
 
     return savedStat;
   }
