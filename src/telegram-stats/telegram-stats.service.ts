@@ -3,6 +3,9 @@ import { Hears, Help, On, Start, Update } from 'nestjs-telegraf';
 import { StatsService } from 'src/stats/stats.service';
 import { Context } from 'telegraf';
 
+// todo
+// check the telegram id's for god's sake
+
 @Update()
 @Injectable()
 export class TelegramStatsService {

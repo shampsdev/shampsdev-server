@@ -2,6 +2,10 @@ import { Controller, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { GithubStatsService } from './github-stats.service';
 import { StatsService } from 'src/stats/stats.service';
 
+// todo 
+// move most of these methods into the service
+// add security features
+
 @Controller('github-stats')
 export class GithubStatsController {
   constructor(private readonly statsService: StatsService) {}
