@@ -1,0 +1,24 @@
+services:
+  database:
+    restart: unless-stopped
+    image: postgis/postgis:16-3.4
+    container_name: database
+    volumes:
+      - ~/.pg/shampsdev-db:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+  backend:
+    container_name: backend
+    build: .
+    env_file:
+      - .env
+    environment:
+      HTTP_PORT: 8000
+      POSTGRES_HOST: database
+    depends_on:
+      - database
+    ports:
+      - "8000:8000"
+    restart: unless-stopped

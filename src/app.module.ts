@@ -8,23 +8,29 @@ import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TelegramModule } from 'nestjs-telegram';
 import { TelegramStatsService } from './telegram-stats/telegram-stats.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/shema.gql'),
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       installSubscriptionHandlers: true,
     }),
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'database.sqlite',
+      type: 'postgres',
+      host: process.env.POSTGRES_HOST,
+      port: parseInt(process.env.POSTGRES_PORT, 10),
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
       entities: ['dist/**/*.entity{.ts,.js}'],
-      synchronize: true,
+      synchronize: process.env.AUTO_MIGRATE === 'True',
     }),
     TelegramModule.forRoot({
-      botKey: 'YourBotApiToken',
+      botKey: process.env.BOT_KEY,
     }),
     StatsModule,
   ],
