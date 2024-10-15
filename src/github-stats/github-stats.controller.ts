@@ -2,7 +2,7 @@ import { Controller, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { GithubStatsService } from './github-stats.service';
 import { StatsService } from 'src/stats/stats.service';
 
-// todo 
+// todo
 // move most of these methods into the service
 // add security features
 
@@ -16,9 +16,10 @@ export class GithubStatsController {
     console.log(req);
 
     if (event === 'push') {
-      const currentCount = (await this.statsService.findLatest()).find(
-        (x) => x.stat_id == 'github_commit_count'
-      ).count;
+      const currentCount =
+        (await this.statsService.findLatest()).find(
+          (x) => x.stat_id == 'github_commit_count'
+        ).count ?? 0;
 
       const updatedCount = currentCount + 1;
 
