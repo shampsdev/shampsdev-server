@@ -24,7 +24,7 @@ export class GithubStatsController {
 
       await this.statsService.createStat({
         stat_id: 'github_commit_count',
-        name: 'коммита',
+        name: '— количество коммитов в гитхабе',
         count: updatedCount,
       });
 
